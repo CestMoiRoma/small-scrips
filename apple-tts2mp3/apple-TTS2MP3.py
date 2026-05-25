@@ -2,10 +2,10 @@
 """
 tts.py — Apple TTS (say) → MP3
 Usage:
-  python3 tts.py "Bonjour le monde"
-  python3 tts.py "Bonjour" 220
+  python3 tts.py "Hello world"
+  python3 tts.py "Hello" 220
   python3 tts.py "Hello" 220 -o hello.mp3 -v Samantha
-  echo "texte depuis stdin" | python3 tts.py -
+  echo "text from stdin" | python3 tts.py -
 """
 
 import sys
@@ -18,33 +18,33 @@ from pathlib import Path
 
 def parse_args():
     p = argparse.ArgumentParser(
-        description="Convertit du texte en MP3 via la commande say de macOS."
+        description="Converts text to MP3 using the macOS say command."
     )
     p.add_argument(
         "text",
         nargs="?",
-        help="Texte à synthétiser. Utilisez '-' pour lire depuis stdin.",
+        help="Text to synthesize. Use '-' to read from stdin.",
     )
     p.add_argument(
         "-r", "--rate",
         type=int,
         default=175,
-        help="Vitesse de parole en mots/minute (défaut : 175).",
+        help="Speech rate in words per minute (default: 175).",
     )
     p.add_argument(
         "-v", "--voice",
         default=None,
-        help="Voix à utiliser (ex: Thomas, Samantha). Défaut : voix système.",
+        help="Voice to use (e.g. Thomas, Samantha). Default: system voice.",
     )
     p.add_argument(
         "-o", "--output",
         default="output.mp3",
-        help="Fichier MP3 de sortie (défaut : output.mp3).",
+        help="Output MP3 file (default: output.mp3).",
     )
     p.add_argument(
         "--list-voices",
         action="store_true",
-        help="Affiche les voix disponibles et quitte.",
+        help="List available voices and exit.",
     )
     return p.parse_args()
 
@@ -63,35 +63,35 @@ def synthesize(text: str, rate: int, voice: str | None, output: str):
         tmp_path = tmp.name
 
     try:
-        # ── Étape 1 : say → AIFF ─────────────────────────────────────────
+        # ── Step 1: say → AIFF ───────────────────────────────────────────
         say_cmd = ["say", "-r", str(rate), "-o", tmp_path]
         if voice:
             say_cmd += ["-v", voice]
         say_cmd.append(text)
 
-        print(f"🗣  Synthèse  | voix: {voice or 'système'}  |  rate: {rate} wpm")
+        print(f"🗣  Synthesizing  | voice: {voice or 'system'}  |  rate: {rate} wpm")
         result = subprocess.run(say_cmd, capture_output=True, text=True)
         if result.returncode != 0:
-            print(f"Erreur say : {result.stderr.strip()}")
+            print(f"say error: {result.stderr.strip()}")
             return False
 
-        # ── Étape 2 : AIFF → MP3 via ffmpeg ─────────────────────────────
+        # ── Step 2: AIFF → MP3 via ffmpeg ────────────────────────────────
         ffmpeg_cmd = [
-            "ffmpeg", "-y",           # écraser sans demander
+            "ffmpeg", "-y",           # overwrite without asking
             "-i", tmp_path,
             "-codec:a", "libmp3lame",
-            "-q:a", "2",              # qualité VBR haute (~190 kbps)
+            "-q:a", "2",              # high VBR quality (~190 kbps)
             str(output_path),
         ]
 
-        print(f"🔄  Conversion MP3…")
+        print(f"🔄  Converting to MP3…")
         result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
         if result.returncode != 0:
-            print(f"Erreur ffmpeg : {result.stderr.strip()}")
+            print(f"ffmpeg error: {result.stderr.strip()}")
             return False
 
         size_kb = output_path.stat().st_size // 1024
-        print(f"✅  Fichier créé : {output_path}  ({size_kb} Ko)")
+        print(f"✅  File created: {output_path}  ({size_kb} KB)")
         return True
 
     finally:
@@ -100,7 +100,7 @@ def synthesize(text: str, rate: int, voice: str | None, output: str):
 
 def main():
     if sys.platform != "darwin":
-        print("Ce script nécessite macOS (commande say).")
+        print("This script requires macOS (say command).")
         sys.exit(1)
 
     args = parse_args()
@@ -109,18 +109,18 @@ def main():
         list_voices()
         return
 
-    # Lecture du texte
+    # Read the input text
     if args.text == "-" or (args.text is None and not sys.stdin.isatty()):
         text = sys.stdin.read().strip()
     elif args.text:
         text = args.text
     else:
-        print("Erreur : fournissez un texte ou utilisez '-' pour stdin.")
-        print("         python3 tts.py --help")
+        print("Error: provide text or use '-' to read from stdin.")
+        print("       python3 tts.py --help")
         sys.exit(1)
 
     if not text:
-        print("Erreur : le texte est vide.")
+        print("Error: text is empty.")
         sys.exit(1)
 
     success = synthesize(text, args.rate, args.voice, args.output)

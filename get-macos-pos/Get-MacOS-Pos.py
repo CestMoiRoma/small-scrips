@@ -5,7 +5,7 @@ from CoreLocation import CLLocationManager, kCLLocationAccuracyBest
 from Foundation import NSRunLoop, NSDate
 
 
-# ── Localisation GPS ─────────────────────────────────────────────────────────
+# ── GPS Location ─────────────────────────────────────────────────────────────
 
 class LocationDelegate(objc.lookUpClass("NSObject")):
     def init(self):
@@ -34,7 +34,7 @@ def get_mac_location():
         manager.setDesiredAccuracy_(kCLLocationAccuracyBest)
         manager.startUpdatingLocation()
 
-        print("Demande de localisation envoyée… En attente du système.")
+        print("Location request sent… Waiting for system.")
 
         run_loop = NSRunLoop.currentRunLoop()
         while not delegate.is_done:
@@ -46,33 +46,33 @@ def get_mac_location():
         manager.stopUpdatingLocation()
 
         if delegate.error:
-            print(f"Erreur GPS : {delegate.error}")
+            print(f"GPS error: {delegate.error}")
             return None
 
         return delegate.location
 
 
-# ── Géocodage inverse offline (GeoNames embarqué) ────────────────────────────
+# ── Offline reverse geocoding (bundled GeoNames) ─────────────────────────────
 
 def reverse_geocode_local(lat: float, lon: float) -> str:
     """
-    Retourne 'Ville, Région, Pays' sans aucune connexion réseau.
-    Utilise la base GeoNames bundlée dans le package reverse_geocoder.
-    Précision : ville / département (pas la rue).
+    Returns 'City, Region, Country' with no network connection required.
+    Uses the GeoNames database bundled in the reverse_geocoder package.
+    Precision: city / district level (not street level).
     """
     results = reverse_geocoder.search((lat, lon), verbose=False)
     if not results:
-        return "Lieu inconnu"
+        return "Unknown location"
     r = results[0]
     parts = [p for p in [r.get("name"), r.get("admin2"), r.get("admin1"), r.get("cc")] if p]
     return ", ".join(parts)
 
 
-# ── Point d'entrée ───────────────────────────────────────────────────────────
+# ── Entry point ──────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     if sys.platform != "darwin":
-        print("Ce script ne fonctionne que sur macOS.")
+        print("This script only works on macOS.")
         sys.exit(1)
 
     location = get_mac_location()
@@ -83,11 +83,11 @@ if __name__ == "__main__":
     lat    = coords.latitude
     lon    = coords.longitude
 
-    print("\n--- Localisation du Mac ---")
+    print("\n--- Mac Location ---")
     print(f"Latitude  : {lat}")
     print(f"Longitude : {lon}")
-    print(f"Précision : {location.horizontalAccuracy()} mètres")
-    print(f"Altitude  : {location.altitude()} mètres")
+    print(f"Accuracy  : {location.horizontalAccuracy()} meters")
+    print(f"Altitude  : {location.altitude()} meters")
 
     place = reverse_geocode_local(lat, lon)
     print(f"\n📍 {place}")

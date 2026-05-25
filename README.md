@@ -72,6 +72,7 @@ Want to add a script? Just open a PR!
 - One script = one problem, keep it focused
 - Put everything in its own folder: `your-script/your_script.py` + `requirements.txt`
 - Must have a `--help` flag or a module docstring explaining usage
+- If your script needs environment variables, add a `.env.example` with each variable listed and a short comment explaining what it's for. Never commit a real `.env`.
 
 **2. Wiki**
 - Add a `wiki.md` inside your script folder (see any existing one as a template)

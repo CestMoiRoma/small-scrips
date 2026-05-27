@@ -4,6 +4,8 @@ A growing collection of Python scripts I write whenever I need a quick tool.
 Nothing fancy — each script solves one problem and does it well.
 I'm sharing them as a loose library in case they're useful to anyone else.
 
+[![.github/workflows/sync-wiki.yml](https://github.com/CestMoiRoma/small-scrips/actions/workflows/sync-wiki.yml/badge.svg)](https://github.com/CestMoiRoma/small-scrips/actions/workflows/sync-wiki.yml)
+
 ---
 
 ## 📦 Scripts

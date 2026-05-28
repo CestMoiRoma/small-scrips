@@ -14,7 +14,7 @@ Each script is self-contained with its own `requirements.txt` and documentation.
 | `get-macos-pos` | Get your Mac's GPS coordinates and reverse-geocode them offline | [📖](scripts/get-macos-pos) |
 | `ollama-bulk-pull` | Bulk-download Ollama models with a live progress bar | [📖](scripts/ollama-bulk-pull) |
 
-→ [All scripts](scripts)
+→ [All scripts](scripts/index)
 
 ---
 

@@ -41,8 +41,8 @@ jobs:
           # wiki/home.md → Home (the wiki landing page)
           cp wiki/home.md _wiki/Home.md
 
-          # wiki/scripts.md → scripts.md (scripts index page)
-          cp wiki/scripts.md _wiki/scripts.md
+          # wiki/scripts.md → scripts/index.md (scripts index page)
+          cp wiki/scripts.md _wiki/scripts/index.md
 
           # ROADMAP
           cp ROADMAP.md _wiki/Roadmap.md
@@ -68,7 +68,7 @@ jobs:
           lines += [
               "## 📦 Scripts\n",
               "\n",
-              "- [Scripts](scripts)\n",
+              "- [Index](scripts/index)\n",
               "- [Token Calculator](scripts/token-calculator)\n",
               "- [Apple TTS → MP3](scripts/apple-tts2mp3)\n",
               "- [Get macOS Position](scripts/get-macos-pos)\n",

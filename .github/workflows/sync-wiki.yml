@@ -35,30 +35,22 @@ jobs:
           git -C _wiki rm -rf . --quiet
           git -C _wiki clean -fd
 
-      - name: Copy docs into wiki
+      - name: Copy docs into wiki (flat)
         run: |
-          mkdir -p _wiki/scripts
+          # Landing page and indexes
+          cp wiki/home.md                _wiki/Home.md
+          cp wiki/Small_Scripts_index.md _wiki/Small_Scripts_index.md
+          cp wiki/Small_Doc_Index.md     _wiki/Small_Doc_Index.md
+          cp ROADMAP.md                  _wiki/Roadmap.md
 
-          # Landing page
-          cp wiki/home.md _wiki/Home.md
+          # Script docs (keep original filenames)
+          cp token-calculator/token_calculator.md _wiki/token_calculator.md
+          cp apple-tts2mp3/apple-TTS2MP3.md       _wiki/apple-TTS2MP3.md
+          cp get-macos-pos/Get-MacOS-Pos.md        _wiki/Get-MacOS-Pos.md
+          cp ollama-bulk-pull/ollama_bulk_pull.md  _wiki/ollama_bulk_pull.md
 
-          # Roadmap
-          cp ROADMAP.md _wiki/Roadmap.md
-
-          # Small-doc sections (git/, linux/, docker/, …)
-          cp -r small-doc/. _wiki/
-
-          # Small-doc index (after small-doc copy so it can't be overwritten)
-          cp wiki/Small_Doc_Index.md _wiki/index.md
-
-          # Scripts index
-          cp wiki/Small_Scripts_index.md _wiki/scripts/index.md
-
-          # Script docs
-          cp token-calculator/token_calculator.md _wiki/scripts/token-calculator.md
-          cp apple-tts2mp3/apple-TTS2MP3.md       _wiki/scripts/apple-tts2mp3.md
-          cp get-macos-pos/Get-MacOS-Pos.md        _wiki/scripts/get-macos-pos.md
-          cp ollama-bulk-pull/ollama_bulk_pull.md  _wiki/scripts/ollama-bulk-pull.md
+          # Small-doc pages — flatten: drop the subfolder, keep the filename
+          find small-doc -name "*.md" -exec bash -c 'cp "$1" "_wiki/$(basename "$1")"' _ {} \;
 
       - name: Generate _Sidebar.md
         run: |
@@ -68,17 +60,17 @@ jobs:
           lines = [
               "## 📦 Scripts\n",
               "\n",
-              "- [Index](scripts/index)\n",
-              "- [Token Calculator](scripts/token-calculator)\n",
-              "- [Apple TTS → MP3](scripts/apple-tts2mp3)\n",
-              "- [Get macOS Position](scripts/get-macos-pos)\n",
-              "- [Ollama Bulk Pull](scripts/ollama-bulk-pull)\n",
+              "- [Index](Small_Scripts_index)\n",
+              "- [Token Calculator](token_calculator)\n",
+              "- [Apple TTS → MP3](apple-TTS2MP3)\n",
+              "- [Get macOS Position](Get-MacOS-Pos)\n",
+              "- [Ollama Bulk Pull](ollama_bulk_pull)\n",
               "\n",
               "---\n",
               "\n",
               "## 📝 Small Doc\n",
               "\n",
-              "- [Index](index)\n",
+              "- [Index](Small_Doc_Index)\n",
               "\n",
           ]
 
@@ -94,28 +86,33 @@ jobs:
               "Conventional Commits": "conventional-commits",
           }
 
+          # Maps folder name → actual filename prefix (only needed where they differ)
+          folder_prefix = {
+              "windows-cmd": "cmd",
+          }
+
           page_labels = {
-              "cheatsheet":                     "Cheat Sheet",
-              "basics":                         "Basics",
-              "advanced":                       "Advanced",
-              "flags":                          "Flags",
-              "conventional-commits":           "Types & descriptions",
-              "conventional-commits-cheatsheet":"Cheat Sheet",
+              "cheatsheet":                      "Cheat Sheet",
+              "basics":                          "Basics",
+              "advanced":                        "Advanced",
+              "flags":                           "Flags",
+              "conventional-commits":            "Types & descriptions",
+              "conventional-commits-cheatsheet": "Cheat Sheet",
           }
 
           for section_name, folder in sections.items():
-              folder_path = os.path.join("_wiki", folder)
+              folder_path = os.path.join("small-doc", folder)
               if not os.path.isdir(folder_path):
                   continue
+              prefix = folder_prefix.get(folder, folder)
               lines.append(f"**{section_name}**\n\n")
               for fname in sorted(os.listdir(folder_path)):
                   if not fname.endswith(".md"):
                       continue
                   slug = fname[:-3]
-                  parts = slug.split("-")
-                  key = "-".join(parts[1:]) if len(parts) > 1 and parts[0] == folder.split("-")[0] else slug
+                  key = slug[len(prefix) + 1:] if slug.startswith(prefix + "-") else slug
                   label = page_labels.get(key, key.replace("-", " ").title())
-                  lines.append(f"- [{label}]({folder}/{slug})\n")
+                  lines.append(f"- [{label}]({slug})\n")
               lines.append("\n")
 
           lines += ["---\n", "\n", "- [🗺️ Roadmap](Roadmap)\n"]

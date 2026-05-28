@@ -7,6 +7,8 @@ Each script is self-contained with its own `requirements.txt` and documentation.
 
 ## 📦 Scripts
 
+→ [All scripts](scripts/index)
+
 | Script | Description | Docs |
 |--------|-------------|------|
 | `token-calculator` | Count tokens in a Markdown file and estimate API costs | [📖](scripts/token-calculator) |
@@ -14,13 +16,13 @@ Each script is self-contained with its own `requirements.txt` and documentation.
 | `get-macos-pos` | Get your Mac's GPS coordinates and reverse-geocode them offline | [📖](scripts/get-macos-pos) |
 | `ollama-bulk-pull` | Bulk-download Ollama models with a live progress bar | [📖](scripts/ollama-bulk-pull) |
 
-→ [All scripts](scripts/index)
+
 
 ---
 
 ## 📝 Small Doc
 
-Quick references — no fluff, straight to the point.
+→ [All Docs](index)
 
 ### Git
 [Cheat Sheet](git/git-cheatsheet) · [Basics](git/git-basics) · [Advanced](git/git-advanced) · [Flags](git/git-flags)

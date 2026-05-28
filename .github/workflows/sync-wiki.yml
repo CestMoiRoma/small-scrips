@@ -31,8 +31,12 @@ jobs:
       # ── Copy files ─────────────────────────────────────────────────────────
       - name: Copy docs into wiki
         run: |
-          # Remove everything except .git
-          find _wiki -mindepth 1 -not -path '_wiki/.git*' -delete
+          # Wipe the entire wiki content (git-aware: leaves .git intact)
+          git -C _wiki rm -rf . --quiet
+          git -C _wiki clean -fd
+
+          # Pre-create output directories
+          mkdir -p _wiki/scripts
 
           # wiki/home.md → Home (the wiki landing page)
           cp wiki/home.md _wiki/Home.md

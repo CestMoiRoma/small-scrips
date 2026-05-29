@@ -84,6 +84,7 @@ jobs:
               "Windows CMD":          "windows-cmd",
               "PowerShell":           "powershell",
               "Conventional Commits": "conventional-commits",
+              "Flowchart":            "flowchart",
           }
 
           # Maps folder name → actual filename prefix (only needed where they differ)
@@ -98,6 +99,7 @@ jobs:
               "flags":                           "Flags",
               "conventional-commits":            "Types & descriptions",
               "conventional-commits-cheatsheet": "Cheat Sheet",
+              "flowchart":                       "Basics",
           }
 
           for section_name, folder in sections.items():

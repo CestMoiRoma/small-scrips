@@ -98,3 +98,13 @@ Quick references — no fluff, straight to the point.
 |------|-------------|
 | [conventional-commits-cheatsheet.md](conventional-commits-cheatsheet) | All types and rules in one table |
 | [conventional-commits.md](conventional-commits) | Types with descriptions and examples |
+
+---
+
+## Flowchart (Logigramme)
+
+| Page | Description |
+|------|-------------|
+| [flowchart-cheatsheet.md](flowchart-cheatsheet) | All symbols, structures and Mermaid syntax in one table |
+| [flowchart.md](flowchart) | Core symbols, mandatory structure, control flows, basic rules |
+| [flowchart-advanced.md](flowchart-advanced) | Swim lanes, levels of detail, subprocesses, DFD, best practices, tools |
